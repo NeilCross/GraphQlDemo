@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Linq;
+using System.Reflection;
+using GraphQlDemo.Middlewares.GraphQlTypes;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlDemo.Middlewares
 {
@@ -8,6 +12,13 @@ namespace GraphQlDemo.Middlewares
         public static IApplicationBuilder UseGraphQl(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<GraphQlMiddleware>();
+        }
+        public static void AddGraphQl(this IServiceCollection collection)
+        {
+            foreach (var type in Assembly.GetEntryAssembly().GetExportedTypes().Where(t => typeof(GraphQlController).IsAssignableFrom(t)))
+            {
+                collection.Add(new ServiceDescriptor(type,type, ServiceLifetime.Scoped));
+            }
         }
     }
 }

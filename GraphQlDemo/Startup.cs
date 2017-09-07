@@ -1,5 +1,6 @@
 ﻿using GraphQlDemo.Data;
 using GraphQlDemo.Middlewares;
+using GraphQlDemo.Middlewares.GraphQlTypes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,8 @@ namespace GraphQlDemo
 {
     public class Startup
     {
+        GraphQlResolver graphQlResolver;
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -28,7 +31,10 @@ namespace GraphQlDemo
             // Add framework services.
             services.AddMvc();
 
+            services.AddGraphQl();
+
             services.AddSingleton<IBookRepository, BookRepository>();
+            services.AddSingleton<GraphQlResolver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,10 +42,9 @@ namespace GraphQlDemo
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
-            app.UseGraphQl();
-
+            
             app.UseMvc();
+            app.UseGraphQl();
         }
     }
 }

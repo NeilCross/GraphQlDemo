@@ -8,18 +8,20 @@ using System.IO;
 using System.Collections.Generic;
 using GraphQlDemo.Middlewares.GraphQlTypes;
 using GraphQlDemo.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQlDemo.Middlewares
 {
     public class GraphQlMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IBookRepository _bookRepository;
+        
+        private readonly GraphQlResolver graphResolver;
 
-        public GraphQlMiddleware(RequestDelegate next, IBookRepository bookRepository)
+        public GraphQlMiddleware(RequestDelegate next, GraphQlResolver graphResolver)
         {
             _next = next;
-            _bookRepository = bookRepository;
+            this.graphResolver = graphResolver;
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -32,7 +34,7 @@ namespace GraphQlDemo.Middlewares
                     var query = await sr.ReadToEndAsync();
                     if (!String.IsNullOrWhiteSpace(query))
                     {
-                        var schema = new Schema { Query = new BooksQuery(_bookRepository) };
+                        var schema = new Schema { Query = graphResolver };
 
                         var result = await new DocumentExecuter()
                             .ExecuteAsync(options =>

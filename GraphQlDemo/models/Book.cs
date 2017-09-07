@@ -1,4 +1,6 @@
-﻿namespace GraphQlDemo.Models
+﻿using System.Collections.Generic;
+
+namespace GraphQlDemo.Models
 {
     public class Book
     {
@@ -9,5 +11,7 @@
         public Author Author { get; set; }
 
         public Publisher Publisher { get; set; }
+
+        public IEnumerable<Book> Similar { get; set; }
     }
 }

@@ -11,7 +11,9 @@ namespace GraphQlDemo.Middlewares.GraphQlTypes
             Field(x => x.Name).Description("The name of the book.");
             Field<AuthorType>("author");
             Field<PublisherType>("publisher");
+            Field<ListGraphType<BookType>>("similar",
+                resolve: context => new Book[] { });
 
-        }
+    }
     }
 }
